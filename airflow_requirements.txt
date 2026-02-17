@@ -1,0 +1,23 @@
+# ----------------------
+# Scraping
+# ----------------------
+requests
+beautifulsoup4
+html5lib
+lxml
+
+# ----------------------
+# Data processing
+# ----------------------
+pandas
+numpy
+
+# ----------------------
+# MinIO / S3
+# ----------------------
+minio
+
+# ----------------------
+# Environment / Config
+# ----------------------
+python-dotenv

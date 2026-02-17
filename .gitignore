@@ -13,7 +13,10 @@ __pycache__/
 venv/
 env/
 ENV/
-aiflow_env/
+.airflow_env/
+airflow_env/
+.env.*
+
 
 # =========================
 # Logs
@@ -41,6 +44,7 @@ derby.log
 airflow/logs/
 airflow/dags/__pycache__/
 airflow/plugins/__pycache__/
+airflow/airflow.db
 
 # =========================
 # Docker
