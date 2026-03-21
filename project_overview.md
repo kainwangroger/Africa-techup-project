@@ -40,10 +40,11 @@ C'est ici que se trouve le code Python :
 
 ### 5. Fichiers de Configuration et Infrastructure
 - **`docker-compose.yaml`** : Provisionne tous les services (Airflow, MinIO, Spark, Postgres, Superset, Prometheus, Grafana, Loki, etc...).
-- **`prometheus/` & `promtail/`** : Fichiers de configuration pour le scrapping des métriques et des logs.
-- **`grafana/provisioning/`** : Automatise l'ajout de Prometheus et Loki comme Datasources Grafana.
-- **`scripts-sql.sql`** : Création des tables dans le schéma `analytics`.
-- **`mcp_server.py`** : Serveur MCP pour interagir avec les DAGs via IA.
+- **`prometheus/`**, **`promtail/`** & **`grafana/`** : Configuration complète de la stack d'observabilité (Scraping, Logs et Provisioning de dashboards).
+- **`postgres/`** : Scripts d'initialisation de la base de données (`init-db.sh`).
+- **`scripts-sql.sql`** : Définition des tables finales (Gold) dans PostgreSQL.
+- **`prepare_submission.ps1`** : Script automatique de création de l'archive de soumission.
+- **`Dashboards_User_Guide.md`** : Guide pas-à-pas pour la création des visuels Superset.
 
 ---
 
