@@ -62,12 +62,12 @@ def create_gold_market_intelligence():
         df_final = pd.merge(df_market_base, df_books_sample, on='key').drop('key', axis=1)
         
         # 7. Calculer le prix local
-        df_final['price_local'] = df_final['price_incl_tax'] * df_final['rate']
+        df_final['price_local'] = df_final['price_gbp'] * df_final['rate']
         
         # 8. Filtre des colonnes
-        cols = ['name', 'region', 'population', 'currencies', 'rate', 'titre', 'category', 'price_incl_tax', 'price_local']
+        cols = ['country', 'region', 'population', 'currencies', 'rate', 'book_title', 'category', 'price_gbp', 'price_local']
         df_final = df_final[cols]
-        df_final.rename(columns={'name': 'country', 'price_incl_tax': 'price_gbp', 'titre': 'book_title'}, inplace=True)
+        # Suppression du renommage inutile car déjà fait en amont ou dans le filtre
         
         GOLD_DIR.mkdir(parents=True, exist_ok=True)
         file_path = GOLD_DIR / "market_intelligence.parquet"

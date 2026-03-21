@@ -26,7 +26,9 @@ LINKS_FILE = DATA_DIR / "raw" / "book_links.txt"
 CSV_FILES = DATA_DIR / "raw" / "books_raw_unique.csv"
 JSON_FILES = DATA_DIR / "raw" / "books_raw_unique.json"
 
-OUTPUT_FILES = DATA_DIR / "processed" / "books_clean.csv"
+def delete_old_func(): pass
+
+OUTPUT_FILES = DATA_DIR / "silver" / "books" / "books_clean.csv"
 
 
 # --------------------------------------------------
@@ -98,9 +100,10 @@ def transform_books(
     # Renommage clair
     df = df.rename(columns={
         "prix_hors_taxe": "price_excl_tax",
-        "prix_ttc": "price_incl_tax",
+        "prix_ttc": "price_gbp",
         "disponibilite": "stock",
-        "nombre_davis": "reviews"
+        "nombre_davis": "reviews",
+        "categorie": "category" # Mapping de la nouvelle colonne brute
     })
 
     # Enrichissement avec Taux de Change (Optionnel)
@@ -111,8 +114,8 @@ def transform_books(
             eur_rate = rates_df["EUR"].iloc[0]
             usd_rate = rates_df["USD"].iloc[0]
             
-            df["price_eur"] = df["price_incl_tax"] * eur_rate
-            df["price_usd"] = df["price_incl_tax"] * usd_rate
+            df["price_eur"] = df["price_gbp"] * eur_rate
+            df["price_usd"] = df["price_gbp"] * usd_rate
             logger.info("Conversion de devises effectuée (EUR/USD)")
         except Exception as e:
             logger.warning(f"Conversion devises ignorée : {e}")

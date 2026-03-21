@@ -1,6 +1,5 @@
-# 📊 Guide Complet des Dashboards (Superset & Grafana)
-
-Ce guide récapitule les **3 tables clés** que vous avez dans PostgreSQL et comment les utiliser pour impressionner le jury.
+# Ce document détaille la démarche pour mettre en place les tableaux de bord décisionnels dans Apache Superset.
+L'objectif est de transformer nos données transformées (couche Gold) en insights exploitables pour impressionner le jury.
 
 ---
 
@@ -85,12 +84,9 @@ Si vous ne voulez pas créer les panneaux à la main, j'ai généré un fichier 
 
 ---
 
-## ⚡ 7. Le "Speed-Run" : Gagner du temps
-
-Si vous êtes fatigué de créer les graphiques un par un, voici l'astuce de l'expert :
-
-### Option A : La "Master View" (Table Tout-en-Un)
-Au lieu de créer 3 datasets, créez **un seul Dataset Virtuel** dans **SQL Lab** avec cette requête qui joint tout (les livres et les résumés) :
+## ⚡ 7. Speed-Run : Méthode Optimisée (Master View)
+Pour accélérer la création des graphiques, j'ai conçu une **Vue Maître** en SQL qui regroupe toutes les informations utiles.
+Au lieu de créer 3 datasets, je vous conseille de créer **un seul Dataset Virtuel** dans **SQL Lab** avec cette requête qui joint tout (les livres et les résumés) :
 
 ```sql
 SELECT 

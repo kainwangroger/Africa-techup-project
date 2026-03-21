@@ -12,50 +12,104 @@ Une fois connecté à la base `airflow` (schéma `analytics`), vous verrez :
 
 ---
 
-## 📊 2. Plan du Dashboard (Le "Blueprint" des 8 Graphiques)
-
-Pour un résultat professionnel, vous allez créer **3 Datasets** (un par table) et **8 Graphiques** répartis dans des **onglets**.
-
-### 📂 Onglet 1 : Marché Mondial
-*Dataset : `gold_market_intelligence`*
-1. **Big Number** : Prix Moyen (Local) -> Metric: `AVG(price_local)`.
-2. **Tableau Intelligence** : `country`, `book_title`, `price_local`.
-3. **Bar Chart** : Prix par Pays -> X: `country`, Metric: `AVG(price_local)`.
-
-### 📂 Onglet 2 : Analyse des Livres (Visuels Avancés)
+### 📂 Onglet 1 : Catalogue de Livres (Scraping)
 *Dataset : `gold_books_details`*
-4. **TreeMap** : Répartition Hiérarchique -> Group by: `category`, Metric: `COUNT(*)`. 
-   - *Pourquoi ?* C'est plus moderne et lisible qu'un Pie Chart pour 50 catégories.
-5. **Box Plot** : Distribution des Prix -> X: `category`, Metric: `price_eur`.
-   - *Effet Waoo* : Ce graphe montre le min, le max et la moyenne des prix par genre. Très "Data Science" !
-6. **Time Series (Ligne)** : Évolution de l'Ingestion -> Time: `processed_at`, Metric: `COUNT(*)`.
-   - *Pourquoi ?* Pour montrer le flux de données dans le temps.
+1. **Nom : `[LIVRES] Répartition par Catégorie`**
+   - Type : `TreeMap` | Group by: `category` | Metric: `COUNT(*)`
+2. **Nom : `[LIVRES] Top 10 des livres les plus chers`**
+   - Type : `Bar Chart` | X: `title` | Metric: `MAX(price_gbp)`
+3. **Nom : `[LIVRES] Distribution des prix par genre`**
+   - Type : `Box Plot` | X: `category` | Metric: `price_gbp` (Détails)
+4. **Nom : `[LIVRES] Stock Total de la Librairie`**
+   - Type : `Big Number` | Metric: `SUM(stock)`
 
-### 📂 Onglet 3 : État du Système (4 Sources)
+### 📂 Onglet 2 : Géo-Données (Countries API)
 *Dataset : `gold_project_summary`*
-7. **Big Number with Trendline** : Volume de livres.
-8. **Gauge Chart** : Capacité Ingestion (ex: 0 à 1000 livres).
+5. **Nom : `[MONDE] Répartition des Pays par Région`**
+   - Type : `Pie Chart` | Dimension: `region` | Metric: `COUNT(*)`
+6. **Nom : `[MONDE] Population Mondiale Totale`**
+   - Type : `Big Number` | Metric: `SUM(total_population)`
+
+### 📂 Onglet 3 : Taux de Change (Rates API)
+*Dataset : `gold_project_summary`*
+7. **Nom : `[DEVISES] Taux de conversion vs GBP`**
+   - Type : `Bar Chart` | X: `currency_code` | Metric: `AVG(rate)`
+
+### 📂 Onglet 4 : Simulation Expert (Optionnel)
+*Dataset : `gold_market_intelligence`*
+8. **Nom : `[SIMU] Prix locaux pour l'expansion mondiale`**
+   - Type : `Table` | Columns: `country`, `book_title`, `price_local`
+9. **Nom : `[SIMU] Prix moyen simulé par Pays`**
+   - Type : `Bar Chart` | X: `country` | Metric: `AVG(price_local)`
 
 ---
 
-## 🛠️ 3. Comment créer les Onglets et Filtres ?
+## 🧭 4. Mode Expert : Les Requêtes SQL Lab (Equivalents)
 
-1. **Onglets** : Dans l'édition du Dashboard, cherchez **"Tabs"** dans la barre latérale "Layout Elements". Glissez-le sur votre page. Cliquez sur "Tab 1" pour le renommer.
-2. **Filtres** : Cliquez sur l'icône **"Filters"** à gauche (ou glissez un élément "Filter Box"). 
-   - Choisissez le Dataset `gold_market_intelligence`.
-   - Colonne : `region` ou `country`.
-   - *Magie* : Quand vous filtrerez sur "Europe", tous les graphes de l'onglet Marché se mettront à jour !
+Si vous préférez coder vos graphiques en SQL, voici les requêtes à copier-coller dans **SQL Lab** :
 
----
-
-## 🧭 4. Besoin de SQL ? (Mode Expert)
-Les données dans Superset proviennent de la base PostgreSQL. 
-- **Comment les rafraîchir ?** Lancez le DAG `africa_techup_unified_pipeline` dans Airflow. 
-- **Note** : Le pipeline est maintenant intelligent et ne télécharge pas les données si elles sont déjà présentes et récentes (Incrémental).
+| Graphe | Requête SQL (Schéma: `analytics`) |
+| :--- | :--- |
+| **TreeMap Catégories** | `SELECT category, count(*) FROM analytics.gold_books_details GROUP BY 1;` |
+| **Top 10 Livres** | `SELECT title, price_gbp FROM analytics.gold_books_details ORDER BY 2 DESC LIMIT 10;` |
+| **Stock Total** | `SELECT sum(stock) FROM analytics.gold_books_details;` |
+| **Pop. Mondiale** | `SELECT sum(total_population) FROM analytics.gold_project_summary;` |
+| **Taux vs GBP** | `SELECT currency_code, rate FROM analytics.gold_project_summary;` |
+| **Simulation** | `SELECT country, book_title, price_local FROM analytics.gold_market_intelligence;` |
 
 ---
 
-## 📈 5. Grafana (Observabilité)
-- **URL** : `http://localhost:3001`
-- **CPU/RAM** : Utilisez la source Prometheus.
-- **LOGS** : Utilisez la source Loki pour voir les traces d'Airflow et Spark.
+## 📈 5. Grafana (Observabilité Système)
+
+**URL** : `http://localhost:3001` (admin/admin)
+
+### A. Panneau "Santé des Conteneurs" (Source: Prometheus)
+1. **CPU par Service** :
+   - Query : `sum(rate(container_cpu_usage_seconds_total{name=~".+"}[5m])) by (name)`
+   - Visualisation : **Time Series**
+2. **Mémoire par Service** :
+   - Query : `container_memory_usage_bytes{name=~".+"}`
+   - Visualisation : **Bar Gauge** (pour voir quel service consomme le plus).
+
+### B. Importation Rapide (Mode Automatique)
+
+Si vous ne voulez pas créer les panneaux à la main, j'ai généré un fichier pour vous : **`grafana_dashboard_africa_techup.json`**.
+
+1. Ouvrez Grafana (`localhost:3001`).
+2. Allez dans **Dashboards** -> **New** -> **Import**.
+3. Cliquez sur **Upload JSON file** et choisissez le fichier à la racine de votre projet.
+4. Sélectionnez les DataSources (**Prometheus** et **Loki**) quand on vous le demande.
+5. **BOOM !** Votre monitoring de luxe est prêt. 🚀
+
+---
+
+---
+
+## ⚡ 7. Le "Speed-Run" : Gagner du temps
+
+Si vous êtes fatigué de créer les graphiques un par un, voici l'astuce de l'expert :
+
+### Option A : La "Master View" (Table Tout-en-Un)
+Au lieu de créer 3 datasets, créez **un seul Dataset Virtuel** dans **SQL Lab** avec cette requête qui joint tout (les livres et les résumés) :
+
+```sql
+SELECT 
+    b.*, 
+    s.total_population, 
+    s.total_countries,
+    s.processed_at as sync_date
+FROM analytics.gold_books_details b
+CROSS JOIN (SELECT * FROM analytics.gold_project_summary LIMIT 1) s;
+```
+Enregistrez cette requête comme un dataset nommé **`MASTER_PROJECT_VIEW`**. Vous aurez toutes les colonnes au même endroit pour créer vos onglets 1, 2 et 3 sans changer de dataset !
+
+### Option B : L'Importation (Avancé)
+Superset permet d'importer des fichiers `.zip` ou `.yaml`. 
+*Attention :* Cela nécessite que les UUID de vos bases de données correspondent. Le plus sûr reste la **Master View** ci-dessus qui réduit le travail manuel à quelques clics.
+
+### Option C : Un seul graphique, 10 copies !
+N'oubliez pas que vous pouvez **"Save As"** (Enregistrer sous) un graphique existant. 
+- Créez un premier Bar Chart parfait.
+- Faites "Save As" -> Nommez-le différemment.
+- Changez juste la métrique ou la colonne.
+- C'est 4x plus rapide !
