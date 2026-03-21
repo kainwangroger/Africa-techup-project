@@ -82,3 +82,10 @@ htmlcov/
 # =========================
 dist/
 build/
+venv-linux/
+spark_test_out/
+
+# =========================
+# API Keys & IDE local configs
+# =========================
+.continue/

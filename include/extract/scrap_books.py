@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional, Dict, List
 import json
 
-from include.scripts.scrap_links import create_session
+from include.extract.scrap_links import create_session
 from include.utils.custom_logging import setup_logging, get_logger
 
 # -------------------------
@@ -78,6 +78,16 @@ def extract_book_infos(
     desc_block = soup.find("div", id="product_description")
     if desc_block:
         description = get_text_or_none(desc_block.find_next_sibling("p"))
+    
+    # Extraction image
+    image_tag = soup.find("div", class_="item active")
+    image_url = None
+
+    if image_tag:
+        img = image_tag.find("img")
+        if img and img.get("src"):
+            relative_url = img["src"]
+            image_url = "https://books.toscrape.com/" + relative_url.replace("../../", "")
 
     return {
         "url": url,
@@ -89,6 +99,7 @@ def extract_book_infos(
         "prix_ttc": get_table_value("Price (incl. tax)"),
         "disponibilite": get_table_value("Availability"),
         "nombre_davis": get_table_value("Number of reviews"),
+        "image_url": image_url
     }
 
 
@@ -136,7 +147,7 @@ def save_books_info_to_csv(
 
     fieldnames = [
         "url", "titre", "description", "upc", "type_produit",
-        "prix_hors_taxe", "prix_ttc", "disponibilite", "nombre_davis"
+        "prix_hors_taxe", "prix_ttc", "disponibilite", "nombre_davis", "image_url"
     ]
 
     links = read_links_from_file(LINKS_FILE)
@@ -169,11 +180,6 @@ def save_books_info_to_csv(
 # -------------------------
 def main():
     logger.info("Démarrage du scraping")
-
-    logger.info("Extraction des informations des livres")
-    session = create_session()
-    extract_book_infos(session)
-    session.close()
 
     logger.info("Sauvegarde des données au format JSON")
     save_books_info_to_json(

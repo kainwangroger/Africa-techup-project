@@ -1,6 +1,14 @@
 [project]
-name = "airflow_business"
+name = "africa_techup_project"
 version = "0.1.0"
-
-[tool.setuptools.packages.find]
-include = ["include*"]
+description = "ETL Pipeline Industrialisé"
+dependencies = [
+    "pandas",
+    "pyspark",
+    "requests",
+    "minio",
+    "sqlalchemy",
+    "psycopg2-binary",
+    "pytest",
+    "fastmcp"
+]

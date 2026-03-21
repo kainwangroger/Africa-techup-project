@@ -103,6 +103,22 @@ def transform_books(
         "nombre_davis": "reviews"
     })
 
+    # Enrichissement avec Taux de Change (Optionnel)
+    rates_path = BASE_DIR / "data" / "raw" / "exchange_rates" / "rates_gbp.parquet"
+    if rates_path.exists():
+        try:
+            rates_df = pd.read_parquet(rates_path)
+            eur_rate = rates_df["EUR"].iloc[0]
+            usd_rate = rates_df["USD"].iloc[0]
+            
+            df["price_eur"] = df["price_incl_tax"] * eur_rate
+            df["price_usd"] = df["price_incl_tax"] * usd_rate
+            logger.info("Conversion de devises effectuée (EUR/USD)")
+        except Exception as e:
+            logger.warning(f"Conversion devises ignorée : {e}")
+    else:
+        logger.warning(f"Fichier taux de change introuvable : {rates_path}")
+
     # Création dossier si nécessaire
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 

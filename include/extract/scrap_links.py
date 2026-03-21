@@ -100,7 +100,10 @@ def save_book_links(file_path: Path, links: List[str]) -> None:
 # --------------------------------------------------
 def main():
 
-    save_book_links(LINKS_FILE, links=get_all_book_links())
+    session = create_session()
+    save_book_links(LINKS_FILE, links=get_all_book_links(session))
+    print("Extraction des liens terminés")
+    logger.info("Extraction des liens terminés")
 
 
 if __name__ == "__main__":
