@@ -1,19 +1,7 @@
-# 🎓 Projet Final – Mise en place d’un pipeline ETL (AfricaTechUp)
-
-## 📌 Présentation du Projet
-Ce projet constitue le livrable de fin de parcours pour la formation **Data Engineering d'AfricaTechUp**. Il démontre la mise en place d'un pipeline ETL automatisé respectant les standards industriels étudiés tout au long du cursus.
-
 ---
 
-## 🎯 Objectifs Pédagogiques (Cahier des Charges)
-Conformément aux exigences du parcours, ce pipeline remplit les missions suivantes :
-1.  **Collecte Automatique & Périodique** : Ingestion de données depuis des sources hétérogènes (Web Scraping, APIs REST).
-2.  **Stockage & Nettoyage** : Utilisation d'**Apache Spark** et **Pandas** pour le traitement des données brutes.
-3.  **Persistance des Données** : Mise à disposition des données nettoyées dans un Data Lake S3 (**MinIO**) et un entrepôt **PostgreSQL**.
-
----
-
-## 🧱 Architecture & Technologies Étudiées
+## 🧱 Architecture & Dossiers
+Pour comprendre le rôle de chaque fichier et naviguer sereinement dans le projet, consultez ma **[Cartographie du Projet (PROJECT_STRUCTURE.md)](./PROJECT_STRUCTURE.md)**.
 Le projet mobilise les outils phares du parcours :
 - **Orchestration** : Apache Airflow.
 - **Traitement Distribué** : Apache Spark & Pandas.
