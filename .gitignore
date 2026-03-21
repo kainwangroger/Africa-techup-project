@@ -89,3 +89,9 @@ spark_test_out/
 # API Keys & IDE local configs
 # =========================
 .continue/
+.gemini/
+
+# =========================
+# Local Database Data
+# =========================
+postgres_data/
