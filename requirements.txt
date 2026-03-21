@@ -29,9 +29,6 @@ rich
 kaggle
 pyarrow
 
-# MCP Server
-fastmcp
-
 # Testing & Quality
 pytest
 pytest-spark

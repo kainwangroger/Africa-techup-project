@@ -1,115 +1,57 @@
-# 🚀 Projet fil conducteur – Pipeline ETL industrialisé
+# 🎓 Projet Final – Mise en place d’un pipeline ETL (AfricaTechUp)
 
-## 📌 Présentation générale
-
-Ce projet a pour objectif de concevoir et implémenter un **pipeline ETL (Extract, Transform, Load) industrialisé**, couvrant l'ensemble du cycle de vie de la donnée, depuis des **sources hétérogènes** jusqu'à une **architecture Lakehouse moderne**.
-
-Il s'inscrit dans une logique **Data Engineering professionnelle**, avec automatisation, scalabilité, fiabilité, observabilité et bonnes pratiques DevOps.
+## 📌 Présentation du Projet
+Ce projet constitue le livrable de fin de parcours pour la formation **Data Engineering d'AfricaTechUp**. Il démontre la mise en place d'un pipeline ETL automatisé respectant les standards industriels étudiés tout au long du cursus.
 
 ---
 
-## 🎯 Objectifs du projet
-
-- Automatiser la collecte de données depuis **4 sources hétérogènes**.
-- Traiter les données avec **Pandas** (flexibilité) et **Apache Spark** (scalabilité).
-- Stocker les données dans un **Data Lake S3 (MinIO)** (Bronze/Silver).
-- Centraliser les métriques dans un **Data Warehouse (PostgreSQL)** – schéma `analytics` (Gold).
-- Visualiser les données avec **Apache Superset** et **Grafana**.
-- Monitorer l'infrastructure et centraliser les logs avec la stack **Prometheus, Loki, Promtail et cAdvisor**.
-- Orchestrer l'ensemble avec **Apache Airflow**.
+## 🎯 Objectifs Pédagogiques (Cahier des Charges)
+Conformément aux exigences du parcours, ce pipeline remplit les missions suivantes :
+1.  **Collecte Automatique & Périodique** : Ingestion de données depuis des sources hétérogènes (Web Scraping, APIs REST).
+2.  **Stockage & Nettoyage** : Utilisation d'**Apache Spark** et **Pandas** pour le traitement des données brutes.
+3.  **Persistance des Données** : Mise à disposition des données nettoyées dans un Data Lake S3 (**MinIO**) et un entrepôt **PostgreSQL**.
 
 ---
 
-## 🧱 Architecture globale
-
-### Vue d'ensemble
-
-```
-Sources de données
-   │
-   ├── Site Web (Scraping – Books to Scrape)
-   ├── API REST (RestCountries)
-   ├── API World Bank (Population)
-   ├── API Exchange Rates (Taux de change GBP)
-   │
-   ▼
-[EXTRACT]
-   │
-   ▼
-[RAW ZONE] (Bronze - MinIO)
-   │
-   ▼
-[TRANSFORM] (Pandas / Apache Spark)
-   │
-   ▼
-[CLEAN ZONE] (Silver - MinIO)
-   │
-   ▼
-[ANALYTICS ZONE] (Gold - MinIO + PostgreSQL, schéma analytics)
-   │
-   ├──▶ [DATA VISUALIZATION] (Apache Superset, Grafana)
-   └──▶ [MONITORING & LOGS] (Prometheus, Loki, Promtail, cAdvisor)
-```
+## 🧱 Architecture & Technologies Étudiées
+Le projet mobilise les outils phares du parcours :
+- **Orchestration** : Apache Airflow.
+- **Traitement Distribué** : Apache Spark & Pandas.
+- **Stockage Objets** : MinIO (Architecture Medallion : Bronze / Silver).
+- **Entrepôt de Données** : PostgreSQL (Couche Gold).
 
 ---
 
-## 🐳 Services Docker
+## 🚀 Extensions & Valeur Ajoutée (Bonus)
+Pour aller au-delà des objectifs de base et garantir une exploitation professionnelle, j'ai ajouté deux couches supplémentaires :
 
-| Service | Rôle | Port |
-|---------|------|------|
-| **PostgreSQL** | Base de données (Airflow + Gold) | 5432 |
-| **pgAdmin** | Interface PostgreSQL | 5050 |
-| **Airflow** | Orchestration des pipelines | 8085 |
-| **MinIO** | Object Storage (Data Lake S3) | 9000/8900 |
-| **Spark Master** | Moteur de transformation distribué | 8081/7077 |
-| **Spark Worker** | Nœud de calcul (2 cores, 2GB) | - |
-| **Grafana** | Centralisation des dashboards (Métriques + Logs) | 3001 |
-| **Apache Superset** | BI et Visualisation de l'entrepôt de données | 8088 |
-| **Prometheus** | Collecteur des métriques d'infrastructure | 9090 |
-| **cAdvisor** | Monitoring CPU/RAM des conteneurs Docker | 8082 |
-| **Loki** | Base de données d'agrégation des logs | 3100 |
-| **Promtail/StatsD/PG Exp** | Agents d'exportation des logs et métriques | Divers |
+### 1. Observabilité & Monitoring (Stack PLG)
+Maîtrise de la santé du pipeline via **Prometheus**, **Loki** et **Grafana**. 
+- Le dashboard **`🚀 Africa TechUp - FINAL STABLE MONITOR`** est pré-configuré pour surveiller les transactions et la disponibilité des services (Grafana Zero-Touch).
+
+### 2. Business Intelligence (BI)
+Visualisation des données métiers via **Apache Superset** pour transformer les tables Gold en insights actionnables.
 
 ---
 
-## ▶️ Guide de Lancement Rapide
-
+## 🐳 Guide de Lancement
 ```bash
-# Lancer tous les services
+# Lancement de l'ensemble de l'écosystème
 docker compose up -d
 ```
 
-### Interfaces du Projet :
-- **Airflow** : `http://localhost:8085` (admin/admin) — *Orchestration*
-- **Apache Superset** : `http://localhost:8088` (admin/admin) — *Visualisation métier*
-- **Grafana** : `http://localhost:3001` (admin/admin) — *Observabilité technique*
-- **MinIO** : `http://localhost:8900` (minioadmin/minioadmin) — *Stockage S3*
-- **pgAdmin** : `http://localhost:5050` (admin@admin.com/admin) — *Gestion BDD*
+### Accès aux outils :
+- **Airflow** : `http://localhost:8085` (admin/admin)
+- **MinIO** : `http://localhost:8900` (minioadmin/minioadmin)
+- **PostgreSQL** : `localhost:5432` (via pgAdmin sur le port 5050)
+- **Superset** : `http://localhost:8088` (admin/admin) — *Extension BI*
+- **Grafana** : `http://localhost:3001` (admin/admin) — *Extension Monitoring*
 
 ---
 
 ## 💎 Argumentaire de Soutenance (Mon Pitch)
-
-*"Mon objectif avec ce projet était de construire un écosystème Data performant capable non seulement d'ingérer des flux complexes, mais aussi de s'auto-monitorer en continu."*
-
-Les piliers de mon approche :
-1.  **Ingestion Hybride** : J'ai combiné du Scraping HTML et des APIs REST pour démontrer ma polyvalence technique.
-2.  **Architecture Medallion** : Une segmentation stricte (Bronze/Silver/Gold) garantissant la traçabilité et la qualité de la donnée.
-3.  **Scalabilité Spark** : Le traitement est dimensionné pour traiter des volumes Big Data.
-4.  **Observabilité 360°** : Avec l'intégration de **Prometheus & Grafana**, je maîtrise l'état de santé de mes services en temps réel.
-
----
-
-## 📈 Exploitation du Projet
-
-### 📊 Business Intelligence (Superset)
-Les analyses métiers sont détaillées dans le guide [Dashboards_User_Guide.md](./Dashboards_User_Guide.md). J'ai notamment mis en place une **"Master View" SQL** pour accélérer la création de nouveaux visuels.
-
-### 🛡️ Observabilité Système (Grafana)
-Le dashboard est pré-configuré via provisioning. Il est accessible immédiatement sous le nom :  
-👉 **`🚀 Africa TechUp - FINAL STABLE MONITOR`**.
-
-Ce tableau de bord permet de surveiller dynamiquement :
+Dans le cadre de cette formation AfricaTechUp, j'ai souhaité livrer un projet qui ne se contente pas de déplacer de la donnée, mais qui la sécurise et la valorise. Mon pipeline respecte la méthodologie **Medallion**, assure une traçabilité totale via les logs centralisés (**Loki**) et offre une visibilité immédiate sur les performances via **Grafana**. C'est un moteur ETL complet, scalable et prêt pour la production.
+met de surveiller dynamiquement :
 - La connectivité des bases de données (**Heartbeat**).
 - Le débit des entrées/sorties de **MinIO**.
 - Les files d'attente et transactions **PostgreSQL**.
