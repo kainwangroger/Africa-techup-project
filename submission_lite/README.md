@@ -79,41 +79,40 @@ Sources de données
 docker compose up -d
 ```
 
-### Interfaces :
-- **Airflow** : `http://localhost:8085` (admin/admin)
-- **Apache Superset** : `http://localhost:8088` (admin/admin) — *Données métier*
-- **Grafana** : `http://localhost:3001` (admin/admin) — *Observabilité système & app*
-- **MinIO** : `http://localhost:8900` (minioadmin/minioadmin) — *Data Lake*
+### Interfaces du Projet :
+- **Airflow** : `http://localhost:8085` (admin/admin) — *Orchestration*
+- **Apache Superset** : `http://localhost:8088` (admin/admin) — *Visualisation métier*
+- **Grafana** : `http://localhost:3001` (admin/admin) — *Observabilité technique*
+- **MinIO** : `http://localhost:8900` (minioadmin/minioadmin) — *Stockage S3*
 - **pgAdmin** : `http://localhost:5050` (admin@admin.com/admin) — *Gestion BDD*
 
 ---
 
-## 💎 Le Pitch : Pourquoi ce projet est "Expert" ?
+## 💎 Argumentaire de Soutenance (Mon Pitch)
 
-> *"Imaginez un système capable non seulement de collecter des milliers de données hétérogènes chaque jour, mais aussi de s'auto-surveiller en temps réel."*
+*"Mon objectif avec ce projet était de construire un écosystème Data performant capable non seulement d'ingérer des flux complexes, mais aussi de s'auto-monitorer en continu."*
 
-Ce projet démontre la maîtrise d'une stack **Data Engineering moderne** :
-1.  **Ingestion Hybride** : Scraping HTML + APIs REST.
-2.  **Architecture Medallion** : Rigueur du stockage (Bronze/Silver/Gold) pour une qualité de donnée irréprochable.
-3.  **Scalabilité Spark** : Prêt pour le Big Data.
-4.  **Observabilité 360°** : Grâce à **Prometheus & Grafana**, on ne devine pas que le pipeline fonctionne, on le **prouve**. 
-5.  **Industrialisation** : Tout est packagé dans Docker. Un seul `docker compose up` et l'entrepôt de données est vivant.
+Les piliers de mon approche :
+1.  **Ingestion Hybride** : J'ai combiné du Scraping HTML et des APIs REST pour démontrer ma polyvalence technique.
+2.  **Architecture Medallion** : Une segmentation stricte (Bronze/Silver/Gold) garantissant la traçabilité et la qualité de la donnée.
+3.  **Scalabilité Spark** : Le traitement est dimensionné pour traiter des volumes Big Data.
+4.  **Observabilité 360°** : Avec l'intégration de **Prometheus & Grafana**, je maîtrise l'état de santé de mes services en temps réel.
 
 ---
 
-## 📈 Guide des Tableaux de Bord
+## 📈 Exploitation du Projet
 
-### 📊 Apache Superset (BI - Métier)
-Utilisez le guide [Dashboards_User_Guide.md](./Dashboards_User_Guide.md) pour créer vos graphiques en 2 minutes grâce à la **"Master View"** SQL.
+### 📊 Business Intelligence (Superset)
+Les analyses métiers sont détaillées dans le guide [Dashboards_User_Guide.md](./Dashboards_User_Guide.md). J'ai notamment mis en place une **"Master View" SQL** pour accélérer la création de nouveaux visuels.
 
-### 🛡️ Grafana (Observabilité - Technique)
-**Zero-Touch Configuration** : Le dashboard est déjà importé ! Connectez-vous à Grafana et cherchez le tableau de bord nommé :  
+### 🛡️ Observabilité Système (Grafana)
+Le dashboard est pré-configuré via provisioning. Il est accessible immédiatement sous le nom :  
 👉 **`🚀 Africa TechUp - FINAL STABLE MONITOR`**.
 
-Il vous permet de voir :
-- Si la base de données est vivante (**Heartbeat**).
-- Le volume de données qui rentre dans **MinIO**.
-- Les **Transactions PostgreSQL** qui s'affolent quand le pipeline Airflow tourne.
+Ce tableau de bord permet de surveiller dynamiquement :
+- La connectivité des bases de données (**Heartbeat**).
+- Le débit des entrées/sorties de **MinIO**.
+- Les files d'attente et transactions **PostgreSQL**.
 
 ---
 
