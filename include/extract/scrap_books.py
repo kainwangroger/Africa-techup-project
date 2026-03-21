@@ -79,6 +79,15 @@ def extract_book_infos(
     if desc_block:
         description = get_text_or_none(desc_block.find_next_sibling("p"))
     
+    # Extraction catégorie (breadcrumb)
+    breadcrumb = soup.find("ul", class_="breadcrumb")
+    category = "Books"
+    if breadcrumb:
+        li_elements = breadcrumb.find_all("li")
+        # Structure : Home > Books > Category > Product
+        if len(li_elements) >= 3:
+            category = get_text_or_none(li_elements[2])
+
     # Extraction image
     image_tag = soup.find("div", class_="item active")
     image_url = None
@@ -92,6 +101,7 @@ def extract_book_infos(
     return {
         "url": url,
         "titre": get_text_or_none(product_main.find("h1")),
+        "categorie": category,
         "description": description,
         "upc": get_table_value("UPC"),
         "type_produit": get_table_value("Product Type"),

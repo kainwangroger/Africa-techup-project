@@ -80,11 +80,40 @@ docker compose up -d
 ```
 
 ### Interfaces :
-- Airflow : `http://localhost:8085` (admin/admin)
-- Apache Superset : `http://localhost:8088` (admin/admin)
-- Grafana : `http://localhost:3001` (admin/admin)
-- MinIO : `http://localhost:8900` (minioadmin/minioadmin)
-- pgAdmin : `http://localhost:5050` (admin@admin.com/admin)
+- **Airflow** : `http://localhost:8085` (admin/admin)
+- **Apache Superset** : `http://localhost:8088` (admin/admin) — *Données métier*
+- **Grafana** : `http://localhost:3001` (admin/admin) — *Observabilité système & app*
+- **MinIO** : `http://localhost:8900` (minioadmin/minioadmin) — *Data Lake*
+- **pgAdmin** : `http://localhost:5050` (admin@admin.com/admin) — *Gestion BDD*
+
+---
+
+## 💎 Le Pitch : Pourquoi ce projet est "Expert" ?
+
+> *"Imaginez un système capable non seulement de collecter des milliers de données hétérogènes chaque jour, mais aussi de s'auto-surveiller en temps réel."*
+
+Ce projet démontre la maîtrise d'une stack **Data Engineering moderne** :
+1.  **Ingestion Hybride** : Scraping HTML + APIs REST.
+2.  **Architecture Medallion** : Rigueur du stockage (Bronze/Silver/Gold) pour une qualité de donnée irréprochable.
+3.  **Scalabilité Spark** : Prêt pour le Big Data.
+4.  **Observabilité 360°** : Grâce à **Prometheus & Grafana**, on ne devine pas que le pipeline fonctionne, on le **prouve**. 
+5.  **Industrialisation** : Tout est packagé dans Docker. Un seul `docker compose up` et l'entrepôt de données est vivant.
+
+---
+
+## 📈 Guide des Tableaux de Bord
+
+### 📊 Apache Superset (BI - Métier)
+Utilisez le guide [Dashboards_User_Guide.md](./Dashboards_User_Guide.md) pour créer vos graphiques en 2 minutes grâce à la **"Master View"** SQL.
+
+### 🛡️ Grafana (Observabilité - Technique)
+**Zero-Touch Configuration** : Le dashboard est déjà importé ! Connectez-vous à Grafana et cherchez le tableau de bord nommé :  
+👉 **`🚀 Africa TechUp - FINAL STABLE MONITOR`**.
+
+Il vous permet de voir :
+- Si la base de données est vivante (**Heartbeat**).
+- Le volume de données qui rentre dans **MinIO**.
+- Les **Transactions PostgreSQL** qui s'affolent quand le pipeline Airflow tourne.
 
 ---
 

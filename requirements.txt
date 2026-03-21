@@ -1,5 +1,6 @@
 # Orchestration & ETL
 apache-airflow
+statsd
 minio
 pandas
 numpy
