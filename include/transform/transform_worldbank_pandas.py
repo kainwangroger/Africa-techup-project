@@ -8,7 +8,7 @@ from include.utils.custom_logging import setup_logging, get_logger
 # CONFIG
 # -------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-RAW_PATH = BASE_DIR / "data" / "raw" / "worldbank" / "population_all.csv"
+RAW_PATH = BASE_DIR / "data" / "raw" / "worldbank" / "population_all.parquet"
 SILVER_DIR = BASE_DIR / "data" / "silver" / "worldbank"
 AUDIT_DIR = BASE_DIR / "data" / "audit"
 

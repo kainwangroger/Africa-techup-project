@@ -163,7 +163,7 @@ def save_books_info_to_csv(
             return
 
     fieldnames = [
-        "url", "titre", "description", "upc", "type_produit",
+        "url", "titre", "categorie", "description", "upc", "type_produit",
         "prix_hors_taxe", "prix_ttc", "disponibilite", "nombre_davis", "image_url"
     ]
 
