@@ -50,7 +50,7 @@ def load_gold_data():
         load_to_postgres(df_market, "gold_market_intelligence")
         
     # On peut aussi charger les livres silver pour Grafana
-    silver_books = base_dir / "data" / "silver" / "books" / "books_clean.csv"
+    silver_books = base_dir / "data" / "silver" / "books_clean.csv"
     if silver_books.exists():
         df_books = pd.read_csv(silver_books)
         load_to_postgres(df_books, "gold_books_details")
