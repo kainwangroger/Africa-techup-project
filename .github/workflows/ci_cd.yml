@@ -1,5 +1,4 @@
 name: Africa Techup Project CI/CD
-
 on:
   push:
     branches: [main, dev]
