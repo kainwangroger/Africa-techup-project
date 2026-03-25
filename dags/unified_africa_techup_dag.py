@@ -98,7 +98,7 @@ with DAG(
     description="Unified ETL Pipeline (4 Sources: Books, Countries, WorldBank, Rates) → MinIO",
     default_args=DEFAULT_ARGS,
     start_date=datetime(2025, 1, 1),
-    schedule_interval="@hourly",
+    schedule_interval="0 */4 * * *",
     catchup=False,
     tags=["industrial", "4-sources", "pandas", "minio"],
 ) as dag:

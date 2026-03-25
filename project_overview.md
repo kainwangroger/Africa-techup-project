@@ -122,7 +122,7 @@ C'est le mode complet qui lance les 13 services (Monitoring, BI, S3, etc.).
 | **3. Init** | `make init` | `docker compose up -d airflow-init` |
 | **4. Start** | `make up` | `docker compose up -d` |
 
-Puis ouvrir Airflow ([http://localhost:8085](http://localhost:8085)) et lancer le DAG `africa_techup_unified_pipeline`.
+Puis ouvrir Airflow ([http://localhost:8085](http://localhost:8085)) et lancer le DAG `africa_techup_unified_pipeline` (Planifié toutes les 4 heures).
 
 ---
 
@@ -145,12 +145,10 @@ Puis ouvrir Airflow ([http://localhost:8085](http://localhost:8085)) et lancer l
 ### 1. Grafana (Observabilité 360°)
 C'est ici que nous surveillons la santé technique de toute l'infrastructure.
 - **Les moteurs (Backend)** :
-
-  - **Promtail** : Ramasse les logs dans les fichiers des conteneurs.
-  - **Loki** : Stocke ces logs de manière indexée.
-  - **cAdvisor** : Regarde l'état (CPU, RAM) des conteneurs Docker en temps réel.
-  - **Prometheus** : Stocke les métriques de performance récoltées.
-- **L'interface (Frontend)** : **Grafana** est branché sur tous ces moteurs pour tout afficher au même endroit via l'onglet *"Explore"* ou des Dashboards pré-configurés.
+  - **Promtail / Loki** : Collecte et indexage des logs conteneurs.
+  - **cAdvisor** : État hardware (CPU, RAM) et uptime des conteneurs Docker en temps réel.
+  - **Prometheus** : Stockage des métriques de performance récoltées.
+- **L'interface (Frontend)** : Dashboard complet incluant 15 indicateurs (Transactions, Volume S3, Santé des clusters Spark, et Ressources Hôte).
 
 ### 2. Apache Superset (Business Intelligence)
 

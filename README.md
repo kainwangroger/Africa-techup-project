@@ -11,10 +11,8 @@ Le projet mobilise les outils phares du parcours :
 Pour aller au-delà des objectifs de base et garantir une exploitation professionnelle, j'ai ajouté deux couches supplémentaires :
 
 ### 1. Observabilité & Monitoring (Stack PLG)
-
-Maîtrise de la santé du pipeline via **Prometheus**, **Loki** et **Grafana**.
-
-- Le dashboard **`🚀 Africa TechUp - FINAL STABLE MONITOR`** est pré-configuré pour surveiller les transactions et la disponibilité des services (Grafana Zero-Touch).
+Maîtrise de la santé du pipeline via **Prometheus**, **Loki**, **cAdvisor** et **Grafana**.
+- Le dashboard **`🚀 Africa TechUp - FINAL STABLE MONITOR`** surveille désormais l'infrastructure complète (CPU, RAM, Uptime Docker) en plus des transactions data.
 
 ### 2. Business Intelligence (BI)
 
