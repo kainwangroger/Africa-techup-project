@@ -8,7 +8,7 @@ from include.utils.custom_logging import setup_logging, get_logger
 # CONFIG
 # -------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-BOOKS_PROCESSED = BASE_DIR / "data" / "silver" / "books" / "books_clean.csv"
+BOOKS_PROCESSED = BASE_DIR / "data" / "silver" / "books_clean.csv"
 COUNTRIES_SILVER = BASE_DIR / "data" / "silver" / "countries" / "countries_silver.parquet"
 RATES_SILVER = BASE_DIR / "data" / "silver" / "exchange_rates" / "rates_silver.parquet"
 GOLD_DIR = BASE_DIR / "data" / "gold"
@@ -65,6 +65,9 @@ def create_gold_market_intelligence():
         df_final['price_local'] = df_final['price_gbp'] * df_final['rate']
         
         # 8. Filtre des colonnes
+        # Rename 'title' -> 'book_title' for clarity in Gold layer
+        if 'title' in df_final.columns:
+            df_final = df_final.rename(columns={'title': 'book_title'})
         cols = ['country', 'region', 'population', 'currencies', 'rate', 'book_title', 'category', 'price_gbp', 'price_local']
         df_final = df_final[cols]
         # Suppression du renommage inutile car déjà fait en amont ou dans le filtre
