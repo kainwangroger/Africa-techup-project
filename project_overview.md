@@ -1,8 +1,6 @@
-# Architecture & Projet Africa Techup
+# 🌍 Projet Africa TechUp
 
-Ce document résume le fonctionnement global du projet, l'organisation des fichiers et le rôle de chaque composant.
-
-## 🏗️ Architecture Globale
+## 🧱 Architecture & Dossiers
 Le projet est une plateforme de données industrialisée utilisant une architecture **Medallion** (Bronze/Silver/Gold).
 
 - **Orchestrateur** : Apache Airflow (gère le planning et l'ordre des tâches).
@@ -83,8 +81,9 @@ C'est ici que se trouve le code Python :
 - `silver/exchange_rates/rates_silver.parquet` : Taux de change enrichis.
 
 ### 🏆 Couche Gold (PostgreSQL uniquement)
-- `analytics.gold_project_summary` : Métriques agrégées.
-- `analytics.gold_books_details` : Détails des livres pour Grafana.
+- `analytics.gold_project_summary` : Métriques agrégées (Business Intelligence).
+- `analytics.gold_books_details` : Détails des livres pour les dashboards Superset.
+- `analytics.gold_market_intelligence` : Table d'expansion (Prix locaux et simulations).
 
 > **Note** : Le dossier `data/gold/` n'est **pas** uploadé dans MinIO. Il est chargé directement dans PostgreSQL (schéma `analytics`).
 
@@ -109,15 +108,21 @@ Le fichier `include/main_pipeline.py` exécute le pipeline complet en séquentie
 
 > ⚠️ Nécessite MinIO et PostgreSQL accessibles en local (ports 9000 et 5432).
 
-### Mode 2 : Airflow (via Docker Compose)
+### Mode 2 : Airflow (via Docker Compose - Recommandé)
 
-```bash
-make postgres   # Démarrer PostgreSQL
-make init       # Initialiser Airflow
-make up         # Lancer tous les services
-```
+C'est le mode complet qui lance les 13 services (Monitoring, BI, S3, etc.).
 
-Puis ouvrir Airflow et lancer le DAG `africa_techup_unified_pipeline`. Les extractions s'exécutent **en parallèle** (plus rapide qu'en local).
+> [!NOTE]  
+> Les commandes `make` sont pour **Linux/macOS/WSL**. Pour **Windows natif**, utilisez les équivalents `docker compose`.
+
+| Action | Linux / macOS / WSL | Windows (Natif) |
+| :--- | :--- | :--- |
+| **1. Config** | `cp .env.example .env` | `copy .env.example .env` |
+| **2. DB** | `make postgres` | `docker compose up -d postgres` |
+| **3. Init** | `make init` | `docker compose up -d airflow-init` |
+| **4. Start** | `make up` | `docker compose up -d` |
+
+Puis ouvrir Airflow ([http://localhost:8085](http://localhost:8085)) et lancer le DAG `africa_techup_unified_pipeline`.
 
 ---
 
@@ -131,17 +136,24 @@ Puis ouvrir Airflow et lancer le DAG `africa_techup_unified_pipeline`. Les extra
 | **Prometheus** | http://localhost:9090 | N/A |
 | **MinIO** | http://localhost:8900 | `minioadmin` / `minioadmin` |
 | **pgAdmin** | http://localhost:5050 | `admin@admin.com` / `admin` |
-| **Spark UI** | http://localhost:8081 | N/A |
+| **Spark UI** | [http://localhost:8081](http://localhost:8081) | N/A |
 
 ---
 
 ## 📊 Visualisation & Observabilité
 
-### 1. Grafana (Métriques et Logs)
-- **Prometheus** (Métriques) et **Loki** (Logs internes Docker) sont ajoutés **automatiquement** comme sources de données.
-- Utilisez l'onglet *"Explore"* pour filtrer les logs de vos différents conteneurs en direct.
+### 1. Grafana (Observabilité 360°)
+C'est ici que nous surveillons la santé technique de toute l'infrastructure.
+- **Les moteurs (Backend)** :
+
+  - **Promtail** : Ramasse les logs dans les fichiers des conteneurs.
+  - **Loki** : Stocke ces logs de manière indexée.
+  - **cAdvisor** : Regarde l'état (CPU, RAM) des conteneurs Docker en temps réel.
+  - **Prometheus** : Stocke les métriques de performance récoltées.
+- **L'interface (Frontend)** : **Grafana** est branché sur tous ces moteurs pour tout afficher au même endroit via l'onglet *"Explore"* ou des Dashboards pré-configurés.
 
 ### 2. Apache Superset (Business Intelligence)
+
 - Création automatique de l'admin à l'initialisation.
 - **Base de données isolée** : Superset utilise `superset_db` pour ses réglages internes.
 - **Accès aux données** : Utiliser l'URI `postgresql+psycopg2://airflow:airflow@postgres:5432/airflow` pour exposer la couche Gold (`analytics`).

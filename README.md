@@ -26,24 +26,54 @@ Visualisation des données métiers via **Apache Superset** pour transformer les
 
 ---
 
-## 🐳 Guide de Lancement
+## 🚀 Guide de Démarrage Rapide
+
+### 1. Prérequis
+
+Assurez-vous d'avoir les outils suivants installés :
+
+- **Git**
+- **Docker** & **Docker Compose**
+- **Python 3.10+** (uniquement pour l'exécution locale hors Docker)
+
+### 2. Installation & Configuration
 
 ```bash
-# Lancement de l'ensemble de l'écosystème
-docker compose up -d
+# 1. Cloner le projet
+git clone https://github.com/roger/Africa-techup-project.git
+cd Africa-techup-project
+
+# 2. Configurer les variables d'environnement
+cp .env.example .env
+# Note : Éditez le fichier .env si vous souhaitez changer les mots de passe par défaut.
 ```
 
-### Accès aux outils :
+### 3. Lancement des Services (Docker)
 
-- **Airflow** : `http://localhost:8085` (admin/admin)
-- **MinIO** : `http://localhost:8900` (minioadmin/minioadmin)
-- **PostgreSQL** : `localhost:5432` (via pgAdmin sur le port 5050)
-- **Superset** : `http://localhost:8088` (admin/admin) — _Extension BI_
-- **Grafana** : `http://localhost:3001` (admin/admin) — _Extension Monitoring_
+> [!NOTE]  
+> Les commandes `make` ci-après sont optimisées pour **Linux / macOS / WSL**.  
+> Si vous êtes sur **Windows (PowerShell/CMD)** sans `make`, utilisez les commandes Docker natives indiquées à droite.
+
+| Action | Linux / macOS / WSL | Windows (Natif) |
+| :--- | :--- | :--- |
+| **1. Base de données** | `make postgres` | `docker compose up -d postgres` |
+| **2. Initialisation** | `make init` | `docker compose up -d airflow-init` |
+| **3. Lancement Total** | `make up` | `docker compose up -d` |
+| **4. Arrêt / Nettoyage** | `make down` | `docker compose down -v` |
+
+### 4. Accès aux Interfaces
+
+| Service | URL | Identifiants |
+| :--- | :--- | :--- |
+| **Airflow** | [http://localhost:8085](http://localhost:8085) | `admin` / `admin` |
+| **MinIO (S3)** | [http://localhost:8900](http://localhost:8900) | `minioadmin` / `minioadmin` |
+| **Grafana** | [http://localhost:3001](http://localhost:3001) | `admin` / `admin` |
+| **Superset** | [http://localhost:8088](http://localhost:8088) | `admin` / `admin` |
+| **pgAdmin** | [http://localhost:5050](http://localhost:5050) | `admin@admin.com` / `admin` |
 
 ---
 
-## 💎 Argumentaire de Soutenance (Mon Pitch)
+## 💎 Argumentaire (Mon Pitch)
 
 Dans le cadre de cette formation AfricaTechUp, j'ai souhaité livrer un projet qui ne se contente pas de déplacer de la donnée, mais qui la sécurise et la valorise. Mon pipeline respecte la méthodologie **Medallion**, assure une traçabilité totale via les logs centralisés (**Loki**) et offre une visibilité immédiate sur les performances via **Grafana**. C'est un moteur ETL complet, scalable et prêt pour la production.
 met de surveiller dynamiquement :
