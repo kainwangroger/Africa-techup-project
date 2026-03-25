@@ -22,5 +22,3 @@ logs-scheduler:
 clean:
 	docker compose down -v
 	rm -rf logs/*
-	rm -rf plugins/*
-	rm -rf dags/*

@@ -20,7 +20,7 @@ TOTAL_BOOKS = 1000
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = BASE_DIR / "data"
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+DATA_DIR = BASE_DIR / "data"
 
 LINKS_FILE = DATA_DIR / "raw" / "book_links.txt"
 CSV_FILES = DATA_DIR / "raw" / "books_raw_unique.csv"
@@ -79,6 +79,7 @@ def transform_books(
     input_path: str = CSV_FILES,
     output_path: str = OUTPUT_FILES
 ) -> None:
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     logger.info("Transformation PySpark démarrée")
 

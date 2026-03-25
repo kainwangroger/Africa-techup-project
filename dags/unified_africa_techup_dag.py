@@ -73,7 +73,9 @@ def transform_rates_task():
 # ------------------------------------------------------------------
 def transform_gold_task():
     from include.transform.transform_gold_summary import create_gold_summary
+    from include.transform.transform_gold_market import create_gold_market_intelligence
     create_gold_summary()
+    create_gold_market_intelligence()
 
 def load_to_postgres_task():
     from include.load.load_to_postgres import load_gold_data
@@ -89,6 +91,7 @@ def upload_all_to_minio_task():
     ensure_bucket_exists(client, config["bucket"])
     upload_folder(client, config["bucket"], RAW_DIR, "bronze")
     upload_folder(client, config["bucket"], SILVER_DIR, "silver")
+    upload_folder(client, config["bucket"], DATA_DIR / "gold", "gold")
 
 # ------------------------------------------------------------------
 # DAG DEFINITION

@@ -44,7 +44,7 @@ x-airflow-common: &airflow-common
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
     - ./include:/opt/airflow/include
-    - ./data:/opt/airflow/data
+    - ./datalake_storage:/opt/airflow/data
     - ./.env:/opt/airflow/.env
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
@@ -289,15 +289,31 @@ services:
     image: apache/superset:3.1.0
     container_name: superset-init
     depends_on:
-      - superset
-      - postgres
+      postgres:
+        condition: service_healthy
+      superset:
+        condition: service_started
     environment:
       SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY}
       SQLALCHEMY_DATABASE_URI: ${SUPERSET_SQLALCHEMY_DATABASE_URI}
     command: >
-      bash -c "superset fab create-admin --username ${SUPERSET_ADMIN_USERNAME} --firstname Superset --lastname Admin --email admin@superset.com --password ${SUPERSET_ADMIN_PASSWORD}
+      bash -c "echo 'Waiting for Postgres...' && sleep 20 &&
+      superset fab create-admin --username ${SUPERSET_ADMIN_USERNAME} --firstname Superset --lastname Admin --email admin@superset.com --password ${SUPERSET_ADMIN_PASSWORD} || true
       && superset db upgrade
       && superset init"
+    networks:
+      - datalab
+
+  # --------------------------
+  # Init Folders (Ensures directories exist even after down -v)
+  # --------------------------
+  init-folders:
+    image: alpine:latest
+    container_name: init-folders
+    volumes:
+      - ./datalake_storage:/opt/airflow/data
+    user: "root"
+    command: /bin/sh -c "mkdir -p /opt/airflow/data/raw /opt/airflow/data/silver /opt/airflow/data/gold /opt/airflow/data/audit /opt/airflow/data/processed && chmod -R 777 /opt/airflow/data"
     networks:
       - datalab
 
@@ -308,16 +324,19 @@ services:
     # Use standard stable image. Depending on host properties privileged/volumes might warn but works in most WSL/Linux OS.
     image: gcr.io/cadvisor/cadvisor:v0.49.1
     container_name: cadvisor
+    command:
+      - '--housekeeping_interval=10s'
+      - '--max_housekeeping_interval=15s'
+      - '--store_container_labels=false'
+      - '--whitelisted_container_labels='
     ports:
-      - "8082:8080" # Avoid port conflict 8080 with Spark/Airflow and 8081 with Spark-Master
+      - "8082:8080"
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
       - /sys:/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    devices:
-      - /dev/kmsg
     privileged: true
     networks:
       - datalab

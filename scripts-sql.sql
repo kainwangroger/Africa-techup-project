@@ -1,3 +1,4 @@
+CREATE DATABASE superset_db;
 CREATE SCHEMA IF NOT EXISTS analytics;
 SET search_path TO analytics;
 

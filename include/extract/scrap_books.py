@@ -20,7 +20,7 @@ logger = get_logger(__name__)
 # -------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = BASE_DIR / "data" / "raw"
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+DATA_DIR = BASE_DIR / "data" / "raw"
 
 LINKS_FILE = DATA_DIR / "book_links.txt"
 OUTPUT_CSV = DATA_DIR / "books_raw_unique.csv"
@@ -154,6 +154,7 @@ def save_books_info_to_csv(
     output_path: Path,
     delay: float = 0.2
 ) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     # Skip si le fichier existe déjà et est complet
     if output_path.exists():
         with open(output_path, "r", encoding="utf-8") as f:

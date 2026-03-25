@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 # -------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = BASE_DIR / "data" / "raw"
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+DATA_DIR = BASE_DIR / "data" / "raw"
 
 LINKS_FILE = DATA_DIR / "book_links.txt"
 

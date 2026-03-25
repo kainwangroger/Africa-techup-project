@@ -85,8 +85,7 @@ RAW_FOLDER = PROJECT_ROOT / "data/raw"
 PROCESSED_FOLDER = PROJECT_ROOT / "data/processed"
 
 # On s'assure que les dossiers existent
-RAW_FOLDER.mkdir(parents=True, exist_ok=True)
-PROCESSED_FOLDER.mkdir(parents=True, exist_ok=True)
+# On s'assurera que les dossiers existent au moment du besoin
 
 
 # -------------------------

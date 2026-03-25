@@ -34,5 +34,5 @@ pytest
 pytest-spark
 
 # Big Data & Storage
-pyspark>=3.3.0
+pyspark==3.5.3
 delta-spark

@@ -219,7 +219,7 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "sum(up{job=\"minio\"})",
+          "expr": "sum(up{job=~\"minio-.*\"})",
           "range": true,
           "refId": "A"
         }
@@ -499,7 +499,7 @@
           },
           "editorMode": "code",
           "expr": "sum(minio_bucket_usage_object_total)",
-          "legendFormat": "Total Objects",
+          "legendFormat": "Objets",
           "range": true,
           "refId": "A"
         }
@@ -571,7 +571,7 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "count(container_last_seen{container_label_com_docker_compose_service!=\"\"})",
+          "expr": "count(container_last_seen{id!=\"/\"})",
           "range": true,
           "refId": "A"
         }
@@ -614,8 +614,8 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "time() - container_start_time_seconds{container_label_com_docker_compose_service!=\"\"}",
-          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "expr": "time() - container_start_time_seconds{id!=\"/\"}",
+          "legendFormat": "{{name}}",
           "range": true,
           "refId": "A"
         }

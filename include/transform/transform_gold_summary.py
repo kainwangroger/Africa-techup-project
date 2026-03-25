@@ -7,7 +7,7 @@ from include.utils.custom_logging import setup_logging, get_logger
 # CONFIG
 # -------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-BOOKS_SILVER = BASE_DIR / "data" / "silver" / "books_clean.csv"
+BOOKS_SILVER = BASE_DIR / "data" / "silver" / "books" / "books_clean.csv"
 COUNTRIES_SILVER = BASE_DIR / "data" / "silver" / "countries" / "countries_silver.parquet"
 POPULATION_RAW = BASE_DIR / "data" / "raw" / "worldbank" / "population_all.parquet"
 RATES_SILVER = BASE_DIR / "data" / "silver" / "exchange_rates" / "rates_silver.parquet"
