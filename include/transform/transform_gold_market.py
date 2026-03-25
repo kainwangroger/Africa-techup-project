@@ -32,26 +32,25 @@ def extract_category(url):
 # -------------------------
 def create_gold_market_intelligence():
     try:
-        logger.info("Début création table GOLD Market Intelligence (V3)")
+        logger.info("Début création table GOLD Market Intelligence (V4 - Fixed Columns)")
         
         # 1. Chargement des sources
         df_books = pd.read_csv(BOOKS_PROCESSED)
         df_countries = pd.read_parquet(COUNTRIES_SILVER)
         df_rates = pd.read_parquet(RATES_SILVER)
         
-        # 2. Enrichissement des livres (Catégorie)
-        df_books['category'] = df_books['url'].apply(extract_category)
-        df_books_sample = df_books.head(50)
+        # 2. Préparer les livres (sample de 50)
+        df_books_sample = df_books.head(50).copy()
         
-        # 3. Préparer les pays : on prend le premier code ISO de la colonne currency_codes
+        # 3. Préparer les pays : extraire la première devise
         df_countries['main_currency'] = df_countries['currency_codes'].str.split(',').str[0].str.strip()
         
         supported_currencies = ['EUR', 'USD', 'ZAR', 'NGN', 'KES', 'EGP']
         df_countries_filtered = df_countries[df_countries['main_currency'].isin(supported_currencies)].copy()
         
-        # 4. Unpivot des taux
-        df_rates_melted = df_rates.melt(id_vars=['base'], value_vars=supported_currencies, 
-                                        var_name='currency_code', value_name='rate')
+        # 4. Unpivot des taux (les devises sont directement en colonnes, pas de colonne 'base')
+        rate_cols = [c for c in supported_currencies if c in df_rates.columns]
+        df_rates_melted = df_rates[rate_cols].melt(var_name='currency_code', value_name='rate')
         
         # 5. Joindre Pays et Taux
         df_market_base = pd.merge(df_countries_filtered, df_rates_melted, left_on='main_currency', right_on='currency_code')
@@ -64,13 +63,10 @@ def create_gold_market_intelligence():
         # 7. Calculer le prix local
         df_final['price_local'] = df_final['price_gbp'] * df_final['rate']
         
-        # 8. Filtre des colonnes
-        # Rename 'title' -> 'book_title' for clarity in Gold layer
-        if 'title' in df_final.columns:
-            df_final = df_final.rename(columns={'title': 'book_title'})
-        cols = ['country', 'region', 'population', 'currencies', 'rate', 'book_title', 'category', 'price_gbp', 'price_local']
+        # 8. Renommer et filtrer les colonnes
+        df_final = df_final.rename(columns={'name': 'country', 'titre': 'book_title'})
+        cols = ['country', 'region', 'population', 'main_currency', 'rate', 'book_title', 'category', 'price_gbp', 'price_local']
         df_final = df_final[cols]
-        # Suppression du renommage inutile car déjà fait en amont ou dans le filtre
         
         GOLD_DIR.mkdir(parents=True, exist_ok=True)
         file_path = GOLD_DIR / "market_intelligence.parquet"
@@ -80,7 +76,9 @@ def create_gold_market_intelligence():
         return df_final
         
     except Exception as e:
-        logger.error(f"Erreur création GOLD Market V3 : {e}")
+        logger.error(f"Erreur création GOLD Market V4 : {e}")
+        import traceback
+        traceback.print_exc()
         return None
 
 if __name__ == "__main__":
