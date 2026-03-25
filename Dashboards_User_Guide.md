@@ -4,9 +4,21 @@ L'objectif est de transformer nos données transformées (couche Gold) en insigh
 
 ---
 
-## 🚀 1. Les 3 Tables Disponibles dans Superset
+## 🚀 1. Connexion Superset & Base de Données
 
-Une fois connecté à la base `airflow` (schéma `analytics`), vous verrez :
+**URL Superset** : `http://localhost:8088`
+**Identifiants** : `admin` / `admin`
+
+Avant de créer vos tableaux de bord, vous devez connecter Superset à la base de données où se trouvent vos données Gold :
+1. Dans Superset, allez dans **Settings** (en haut à droite) -> **Database Connections**.
+2. Cliquez sur **+ Database** -> **PostgreSQL**.
+3. Utilisez cette URI de connexion exacte :
+   ```text
+   postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+   ```
+4. Cliquez sur **Connect** puis **Finish**.
+
+Ensuite, allez dans **Datasets** -> **+ Dataset**, choisissez le schéma `analytics`, et vous y trouverez vos 3 tables :
 
 1. **`gold_books_details`** : L'intégralité des 1000 livres (titres, prix GBP/EUR/USD, stock, avis).
 2. **`gold_project_summary`** : La synthèse "Big Data" (Total Livres, Total Pays, Population Mondiale, Taux de change).
@@ -18,13 +30,13 @@ Une fois connecté à la base `airflow` (schéma `analytics`), vous verrez :
 
 Pour que votre présentation soit organisée, suivez ces étapes :
 
-1.  **Créer le Dashboard** : Allez dans **Dashboards** -> **+ DASHBOARD** (en haut à droite).
-2.  **Activer l'Édition** : Cliquez sur **EDIT DASHBOARD** (crayon en haut à droite).
-3.  **Ajouter des Onglets** :
-    - Sur le panneau de droite, allez dans **Layout Elements**.
-    - Glissez-déposez l'élément **Tabs** tout en haut de votre dashboard.
-    - Cliquez sur "New Tab" pour les renommer (Catalogue, Géo-Données, Devises).
-4.  **Placer vos Graphiques** : Glissez vos graphiques créés précédemment dans les onglets correspondants.
+1. **Créer le Dashboard** : Allez dans **Dashboards** -> **+ DASHBOARD** (en haut à droite).
+2. **Activer l'Édition** : Cliquez sur **EDIT DASHBOARD** (crayon en haut à droite).
+3. **Ajouter des Onglets** :
+   - Sur le panneau de droite, allez dans **Layout Elements**.
+   - Glissez-déposez l'élément **Tabs** tout en haut de votre dashboard.
+   - Cliquez sur "New Tab" pour les renommer (Catalogue, Géo-Données, Devises).
+4. **Placer vos Graphiques** : Glissez vos graphiques créés précédemment dans les onglets correspondants.
 
 ---
 
@@ -47,8 +59,7 @@ Pour que votre présentation soit organisée, suivez ces étapes :
 
 *Dataset : `gold_project_summary`*
 5. **Nom : `[MONDE] Répartition des Pays par Région`**
-
-- Type : `Pie Chart` | Dimension: `region` | Metric: `COUNT(*)`
+   - Type : `Pie Chart` | Dimension: `region` | Metric: `COUNT(*)`
 
 6. **Nom : `[MONDE] Population Mondiale Totale`**
    - Type : `Big Number` | Metric: `SUM(total_population)`
@@ -56,16 +67,16 @@ Pour que votre présentation soit organisée, suivez ces étapes :
 ### 📂 Onglet 3 : Taux de Change (Rates API)
 
 *Dataset : `gold_project_summary`*
-7. **Nom : `[DEVISES] Taux de conversion vs GBP`**
 
-- Type : `Bar Chart` | X: `currency_code` | Metric: `AVG(rate)`
+7. **Nom : `[DEVISES] Taux de conversion vs GBP`**
+   - Type : `Bar Chart` | X: `currency_code` | Metric: `AVG(rate)`
 
 ### 📂 Onglet 4 : Simulation Expert (Optionnel)
 
 *Dataset : `gold_market_intelligence`*
-8. **Nom : `[SIMU] Prix locaux pour l'expansion mondiale`**
 
-- Type : `Table` | Columns: `country`, `book_title`, `price_local`
+8. **Nom : `[SIMU] Prix locaux pour l'expansion mondiale`**
+   - Type : `Table` | Columns: `country`, `book_title`, `price_local`
 
 9. **Nom : `[SIMU] Prix moyen simulé par Pays`**
    - Type : `Bar Chart` | X: `country` | Metric: `AVG(price_local)`
@@ -142,8 +153,9 @@ Si vous utilisez la commande **`docker compose down -v`**, vous perdez toutes vo
 3.  **Lancer le DAG** : Allez sur `localhost:8080` et lancez **`unified_africa_techup_dag`**. Il va tout reconstruire de A à Z (Scraping -> Transformation -> Airflow -> MinIO -> Postgres).
 
 ### 💡 Conseil d'expert :
-*   Utilisez simplement **`docker compose down`** (sans le `-v`) pour garder vos données entre deux sessions !
-*   Si vous voulez forcer un nouveau scraping sans tout supprimer, videz juste le dossier `data/` (mais gardez le dossier lui-même) et relancez le DAG.
+
+- Utilisez simplement **`docker compose down`** (sans le `-v`) pour garder vos données entre deux sessions !
+- Si vous voulez forcer un nouveau scraping sans tout supprimer, videz juste le dossier `data/` (mais gardez le dossier lui-même) et relancez le DAG.
 
 Enregistrez cette requête comme un dataset nommé **`MASTER_PROJECT_VIEW`**. Vous aurez toutes les colonnes au même endroit pour créer vos onglets 1, 2 et 3 sans changer de dataset !
 
