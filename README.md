@@ -1,5 +1,3 @@
----
-
 ## 🧱 Architecture & Dossiers
 Pour comprendre le rôle de chaque fichier et naviguer sereinement dans le projet, consultez ma **[Cartographie du Projet (project_overview.md)](./project_overview.md)**.
 Le projet mobilise les outils phares du parcours :
@@ -7,8 +5,6 @@ Le projet mobilise les outils phares du parcours :
 - **Traitement Distribué** : Apache Spark & Pandas.
 - **Stockage Objets** : MinIO (Architecture Medallion : Bronze / Silver).
 - **Entrepôt de Données** : PostgreSQL (Couche Gold).
-
----
 
 ## 🚀 Extensions & Valeur Ajoutée (Bonus)
 
