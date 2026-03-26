@@ -38,22 +38,32 @@ def load_to_postgres(df: pd.DataFrame, table_name: str, schema: str = "analytics
 
 def load_gold_data():
     base_dir = Path(__file__).resolve().parent.parent.parent
-    gold_path = base_dir / "data" / "gold" / "project_summary.parquet"
-    
-    if gold_path.exists():
-        df = pd.read_parquet(gold_path)
-        load_to_postgres(df, "gold_project_summary")
-        
-    market_path = base_dir / "data" / "gold" / "market_intelligence.parquet"
-    if market_path.exists():
-        df_market = pd.read_parquet(market_path)
-        load_to_postgres(df_market, "gold_market_intelligence")
-        
-    # On peut aussi charger les livres silver pour Grafana
-    silver_books = base_dir / "data" / "silver" / "books_clean.csv"
-    if silver_books.exists():
-        df_books = pd.read_csv(silver_books)
-        load_to_postgres(df_books, "gold_books_details")
+    gold_dir = base_dir / "data" / "gold"
+    silver_dir = base_dir / "data" / "silver"
+
+    # 1. Livres détaillés (silver enrichi avec devises)
+    books_details_path = gold_dir / "books_details.parquet"
+    if books_details_path.exists():
+        df = pd.read_parquet(books_details_path)
+        load_to_postgres(df, "gold_books_details")
+    else:
+        # Fallback : charger les livres silver directement
+        silver_books = silver_dir / "books_clean.csv"
+        if silver_books.exists():
+            df = pd.read_csv(silver_books)
+            load_to_postgres(df, "gold_books_details")
+
+    # 2. Livres analytics (agrégations par catégorie)
+    books_analytics_path = gold_dir / "books_analytics.parquet"
+    if books_analytics_path.exists():
+        df = pd.read_parquet(books_analytics_path)
+        load_to_postgres(df, "gold_books_analytics")
+
+    # 3. Pays enrichis (Countries + WorldBank + Rates)
+    countries_path = gold_dir / "countries_enriched.parquet"
+    if countries_path.exists():
+        df = pd.read_parquet(countries_path)
+        load_to_postgres(df, "gold_countries_enriched")
 
 if __name__ == "__main__":
     load_gold_data()

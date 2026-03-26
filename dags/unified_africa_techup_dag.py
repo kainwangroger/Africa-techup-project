@@ -71,11 +71,14 @@ def transform_rates_task():
 # ------------------------------------------------------------------
 # TASK WRAPPERS (GOLD & SQL)
 # ------------------------------------------------------------------
-def transform_gold_task():
-    from include.transform.transform_gold_summary import create_gold_summary
-    from include.transform.transform_gold_market import create_gold_market_intelligence
-    create_gold_summary()
-    create_gold_market_intelligence()
+def transform_gold_books_task():
+    from include.transform.transform_gold_books import create_gold_books_details, create_gold_books_analytics
+    create_gold_books_details()
+    create_gold_books_analytics()
+
+def transform_gold_countries_task():
+    from include.transform.transform_gold_countries_enriched import create_gold_countries_enriched
+    create_gold_countries_enriched()
 
 def load_to_postgres_task():
     from include.load.load_to_postgres import load_gold_data
@@ -115,29 +118,39 @@ with DAG(
     t_ext_worldbank = PythonOperator(task_id="extract_worldbank", python_callable=extract_worldbank_task)
     t_ext_rates = PythonOperator(task_id="extract_rates", python_callable=extract_rates_task)
 
-    # TRANSFORM
+    # TRANSFORM SILVER
     t_tr_books = PythonOperator(task_id="transform_books", python_callable=transform_books_task)
     t_tr_countries = PythonOperator(task_id="transform_countries", python_callable=transform_countries_task)
     t_tr_worldbank = PythonOperator(task_id="transform_worldbank", python_callable=transform_worldbank_task)
     t_tr_rates = PythonOperator(task_id="transform_rates", python_callable=transform_rates_task)
 
-    # GOLD & SQL
-    t_gold_summary = PythonOperator(task_id="transform_gold_summary", python_callable=transform_gold_task)
+    # GOLD (séparation logique : livres vs géo-données)
+    t_gold_books = PythonOperator(task_id="transform_gold_books", python_callable=transform_gold_books_task)
+    t_gold_countries = PythonOperator(task_id="transform_gold_countries", python_callable=transform_gold_countries_task)
+
+    # LOAD SQL
     t_load_sql = PythonOperator(task_id="load_to_postgres", python_callable=load_to_postgres_task)
 
-    # LOAD (MinIO)
+    # LOAD MinIO
     t_load_minio = PythonOperator(task_id="upload_to_minio", python_callable=upload_all_to_minio_task)
 
+    # ---- DEPENDENCIES ----
     start >> [t_ext_books, t_ext_countries, t_ext_worldbank, t_ext_rates]
-    
+
     t_ext_rates >> t_tr_rates
     [t_ext_books, t_tr_rates] >> t_tr_books
-    
+
     t_ext_countries >> t_tr_countries
     t_ext_worldbank >> t_tr_worldbank
-    
-    # Gold layer depends on silver data being ready
-    [t_tr_books, t_tr_countries] >> t_gold_summary >> t_load_sql
-    
+
+    # Gold Books dépend de : livres silver + taux de change
+    [t_tr_books, t_tr_rates] >> t_gold_books
+
+    # Gold Countries dépend de : countries silver + worldbank + taux de change
+    [t_tr_countries, t_tr_worldbank, t_tr_rates] >> t_gold_countries
+
+    # Load SQL dépend de toutes les tables Gold
+    [t_gold_books, t_gold_countries] >> t_load_sql
+
     # Final load to MinIO
     [t_tr_books, t_tr_countries, t_tr_worldbank, t_tr_rates, t_load_sql] >> t_load_minio >> end
