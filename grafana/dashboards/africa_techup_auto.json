@@ -571,7 +571,7 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "count(container_last_seen{id!=\"/\"})",
+          "expr": "count(container_last_seen{image!=\"\"})",
           "range": true,
           "refId": "A"
         }
