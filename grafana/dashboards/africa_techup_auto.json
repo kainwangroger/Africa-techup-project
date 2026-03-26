@@ -571,7 +571,7 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "count(container_last_seen{container_label_com_docker_compose_service!=\"\"})",
+          "expr": "count(up{job!=\"\"})",
           "range": true,
           "refId": "A"
         }
@@ -617,8 +617,8 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "time() - container_start_time_seconds{container_label_com_docker_compose_service!=\"\"}",
-          "legendFormat": "{{container_label_com_docker_compose_service}}",
+          "expr": "time() - process_start_time_seconds",
+          "legendFormat": "{{job}}",
           "range": true,
           "refId": "A"
         }
