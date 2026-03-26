@@ -83,16 +83,19 @@ def create_gold_books_analytics() -> pd.DataFrame:
 
         # Agrégation par catégorie
         agg = df.groupby("category").agg(
-            nb_books=("category", "count"),
-            avg_price_gbp=("price_gbp", "mean"),
-            min_price_gbp=("price_gbp", "min"),
-            max_price_gbp=("price_gbp", "max"),
-            total_stock=("stock", "sum"),
-            avg_reviews=("reviews", "mean"),
+            nombre_livres=("category", "count"),
+            prix_moyen_gbp=("price_gbp", "mean"),
+            prix_min_gbp=("price_gbp", "min"),
+            prix_max_gbp=("price_gbp", "max"),
+            stock_total=("stock", "sum"),
+            avis_moyen=("reviews", "mean"),
         ).reset_index()
 
+        # Renommer la colonne catégorie
+        agg = agg.rename(columns={"category": "categorie"})
+
         # Arrondir les colonnes numériques
-        for col in ["avg_price_gbp", "min_price_gbp", "max_price_gbp", "avg_reviews"]:
+        for col in ["prix_moyen_gbp", "prix_min_gbp", "prix_max_gbp", "avis_moyen"]:
             agg[col] = agg[col].round(2)
 
         # Enrichir avec les taux de change
@@ -101,10 +104,10 @@ def create_gold_books_analytics() -> pd.DataFrame:
                 rates_df = pd.read_parquet(RATES_RAW)
                 if "EUR" in rates_df.columns:
                     eur_rate = rates_df["EUR"].iloc[0]
-                    agg["avg_price_eur"] = (agg["avg_price_gbp"] * eur_rate).round(2)
+                    agg["prix_moyen_eur"] = (agg["prix_moyen_gbp"] * eur_rate).round(2)
                 if "USD" in rates_df.columns:
                     usd_rate = rates_df["USD"].iloc[0]
-                    agg["avg_price_usd"] = (agg["avg_price_gbp"] * usd_rate).round(2)
+                    agg["prix_moyen_usd"] = (agg["prix_moyen_gbp"] * usd_rate).round(2)
             except Exception as e:
                 logger.warning(f"Conversion devises ignorée : {e}")
 

@@ -20,10 +20,10 @@ Ce document détaille la démarche pour créer les tableaux de bord décisionnel
 Ensuite, allez dans **Datasets** -> **+ Dataset**, choisissez le schéma `analytics`, et vous y trouverez vos 3 tables :
 
 | Table | Description |
-|---|---|
-| **`gold_books_details`** | 1000 livres détaillés (titre, prix GBP/EUR/USD, stock, avis, catégorie) |
-| **`gold_books_analytics`** | Agrégations par catégorie (nombre, prix moyen, stock total) |
-| **`gold_countries_enriched`** | Pays enrichis (Countries API + Population WorldBank + Taux de change) |
+| --- | --- |
+| `gold_books_details` | 1000 livres détaillés (titre, prix GBP/EUR/USD, stock, avis, catégorie) |
+| `gold_books_analytics` | Agrégations par catégorie (nombre, prix moyen, stock total) |
+| `gold_countries_enriched` | Pays enrichis (Countries API + Population WorldBank + Taux de change) |
 
 ---
 
@@ -41,7 +41,7 @@ Ensuite, allez dans **Datasets** -> **+ Dataset**, choisissez le schéma `analyt
 ### Dataset : `gold_books_details`
 
 | # | Nom du graphique | Type | Configuration |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 1 | **Répartition par Catégorie** | TreeMap | Group by: `category`, Metric: `COUNT(*)` |
 | 2 | **Top 10 livres les plus chers** | Bar Chart | X: `titre`, Metric: `MAX(price_gbp)`, Sort Descending, Row Limit: 10 |
 | 3 | **Part du chiffre d'affaires par catégorie** | Pie Chart | Dimension: `category`, Metric: `SUM(price_gbp)` |
@@ -51,9 +51,9 @@ Ensuite, allez dans **Datasets** -> **+ Dataset**, choisissez le schéma `analyt
 ### Dataset : `gold_books_analytics`
 
 | # | Nom du graphique | Type | Configuration |
-|---|---|---|---|
-| 6 | **Prix moyen par catégorie (multi-devises)** | Bar Chart groupé | X: `category`, Metrics: `avg_price_gbp`, `avg_price_eur`, `avg_price_usd` |
-| 7 | **Stock total par catégorie** | Bar Chart horizontal | X: `category`, Metric: `total_stock` |
+| --- | --- | --- | --- |
+| 6 | **Prix moyen par catégorie (multi-devises)** | Bar Chart groupé | X: `categorie`, Metrics: `prix_moyen_gbp`, `prix_moyen_eur`, `prix_moyen_usd` |
+| 7 | **Stock total par catégorie** | Bar Chart horizontal | X: `categorie`, Metric: `stock_total` |
 
 ---
 
@@ -62,13 +62,13 @@ Ensuite, allez dans **Datasets** -> **+ Dataset**, choisissez le schéma `analyt
 ### Dataset : `gold_countries_enriched`
 
 | # | Nom du graphique | Type | Configuration |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 8 | **Répartition des pays par Région** | Pie Chart | Dimension: `region`, Metric: `COUNT(*)` |
-| 9 | **Top 20 pays les plus peuplés** | Bar Chart | X: `country`, Metric: `MAX(population_worldbank)`, Sort Desc, Limit: 20 |
-| 10 | **Population vs Superficie** | Scatter Plot | X: `area`, Y: `population_restcountries`, Series: `region` |
-| 11 | **Taux de change vs GBP** | Bar Chart | X: `main_currency`, Metric: `AVG(currency_rate_vs_gbp)`, Filter: `currency_rate_vs_gbp IS NOT NULL` |
+| 9 | **Top 20 pays les plus peuplés** | Bar Chart | X: `pays`, Metric: `MAX(population_banque_mondiale)`, Sort Desc, Limit: 20 |
+| 10 | **Population vs Superficie** | Scatter Plot | X: `superficie_km2`, Y: `population_api_countries`, Series: `region` |
+| 11 | **Taux de change vs GBP** | Bar Chart | X: `devise_principale`, Metric: `AVG(taux_change_vs_gbp)`, Filter: `taux_change_vs_gbp IS NOT NULL` |
 | 12 | **Nombre de pays** | Big Number | Metric: `COUNT(*)` |
-| 13 | **Table détaillée des pays** | Table | Colonnes: `country`, `region`, `capital`, `population_worldbank`, `main_currency`, `currency_rate_vs_gbp` |
+| 13 | **Table détaillée des pays** | Table | Colonnes: `pays`, `region`, `capitale`, `population_banque_mondiale`, `devise_principale`, `taux_change_vs_gbp` |
 
 ---
 
@@ -87,19 +87,19 @@ SELECT titre, price_gbp FROM analytics.gold_books_details ORDER BY 2 DESC LIMIT 
 SELECT sum(stock) AS stock_total FROM analytics.gold_books_details;
 
 -- Prix moyen par catégorie (multi-devises)
-SELECT category, avg_price_gbp, avg_price_eur, avg_price_usd
-FROM analytics.gold_books_analytics ORDER BY avg_price_gbp DESC;
+SELECT categorie, prix_moyen_gbp, prix_moyen_eur, prix_moyen_usd
+FROM analytics.gold_books_analytics ORDER BY prix_moyen_gbp DESC;
 
 -- Top 20 pays les plus peuplés (données WorldBank)
-SELECT country, population_worldbank, region
+SELECT pays, population_banque_mondiale, region
 FROM analytics.gold_countries_enriched
-WHERE population_worldbank IS NOT NULL
-ORDER BY population_worldbank DESC LIMIT 20;
+WHERE population_banque_mondiale IS NOT NULL
+ORDER BY population_banque_mondiale DESC LIMIT 20;
 
 -- Taux de change par devise
-SELECT main_currency, AVG(currency_rate_vs_gbp) AS rate
+SELECT devise_principale, AVG(taux_change_vs_gbp) AS taux
 FROM analytics.gold_countries_enriched
-WHERE currency_rate_vs_gbp IS NOT NULL
+WHERE taux_change_vs_gbp IS NOT NULL
 GROUP BY 1 ORDER BY 2 DESC;
 
 -- Répartition par région

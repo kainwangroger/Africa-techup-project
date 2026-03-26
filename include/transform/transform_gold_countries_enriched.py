@@ -57,8 +57,8 @@ def create_gold_countries_enriched() -> pd.DataFrame:
                                      right_on=["country_iso2", "latest_year"])
 
             df_pop_latest = df_pop_latest[["country_iso2", "population", "latest_year"]].rename(columns={
-                "population": "population_worldbank",
-                "latest_year": "population_year",
+                "population": "population_banque_mondiale",
+                "latest_year": "annee_population",
             })
 
             # Jointure Countries <-> WorldBank via iso2
@@ -76,8 +76,8 @@ def create_gold_countries_enriched() -> pd.DataFrame:
 
             logger.info("Jointure WorldBank Population effectuée")
         else:
-            df_countries["population_worldbank"] = None
-            df_countries["population_year"] = None
+            df_countries["population_banque_mondiale"] = None
+            df_countries["annee_population"] = None
             logger.warning("Données WorldBank non disponibles")
 
         # --------------------------------------------------
@@ -87,7 +87,7 @@ def create_gold_countries_enriched() -> pd.DataFrame:
             df_rates = pd.read_parquet(RATES_SILVER)
 
             # Extraire la devise principale de chaque pays
-            df_countries["main_currency"] = (
+            df_countries["devise_principale"] = (
                 df_countries["currency_codes"]
                 .str.split(",")
                 .str[0]
@@ -103,14 +103,14 @@ def create_gold_countries_enriched() -> pd.DataFrame:
                 except (ValueError, IndexError):
                     pass
 
-            df_countries["currency_rate_vs_gbp"] = (
-                df_countries["main_currency"].map(currency_rates)
+            df_countries["taux_change_vs_gbp"] = (
+                df_countries["devise_principale"].map(currency_rates)
             )
 
             logger.info("Jointure Exchange Rates effectuée")
         else:
-            df_countries["main_currency"] = None
-            df_countries["currency_rate_vs_gbp"] = None
+            df_countries["devise_principale"] = None
+            df_countries["taux_change_vs_gbp"] = None
             logger.warning("Données Exchange Rates non disponibles")
 
         # --------------------------------------------------
@@ -118,16 +118,29 @@ def create_gold_countries_enriched() -> pd.DataFrame:
         # --------------------------------------------------
         # Renommer pour clarté
         if "population" in df_countries.columns:
-            df_countries = df_countries.rename(columns={"population": "population_restcountries"})
+            df_countries = df_countries.rename(columns={"population": "population_api_countries"})
 
         if "name" in df_countries.columns:
-            df_countries = df_countries.rename(columns={"name": "country"})
+            df_countries = df_countries.rename(columns={"name": "pays"})
 
         # Densité de population (à partir des données REST Countries)
-        if "population_restcountries" in df_countries.columns and "area" in df_countries.columns:
-            df_countries["population_density"] = (
-                df_countries["population_restcountries"] / df_countries["area"]
+        if "population_api_countries" in df_countries.columns and "area" in df_countries.columns:
+            df_countries["densite_population"] = (
+                df_countries["population_api_countries"] / df_countries["area"]
             ).round(2)
+
+        # Renommer les autres colonnes pour clarté
+        rename_map = {
+            "official_name": "nom_officiel",
+            "region": "region",
+            "subregion": "sous_region",
+            "capital": "capitale",
+            "area": "superficie_km2",
+            "languages": "langues",
+            "currencies": "devises",
+            "currency_codes": "codes_devises",
+        }
+        df_countries = df_countries.rename(columns={k: v for k, v in rename_map.items() if k in df_countries.columns})
 
         df_countries["processed_at"] = datetime.utcnow()
 
@@ -135,13 +148,13 @@ def create_gold_countries_enriched() -> pd.DataFrame:
         # 5. Sélection et ordre des colonnes
         # --------------------------------------------------
         desired_cols = [
-            "country", "official_name", "iso2", "iso3",
-            "region", "subregion", "capital",
-            "area", "population_restcountries",
-            "population_worldbank", "population_year",
-            "population_density",
-            "languages", "currencies", "currency_codes",
-            "main_currency", "currency_rate_vs_gbp",
+            "pays", "nom_officiel", "iso2", "iso3",
+            "region", "sous_region", "capitale",
+            "superficie_km2", "population_api_countries",
+            "population_banque_mondiale", "annee_population",
+            "densite_population",
+            "langues", "devises", "codes_devises",
+            "devise_principale", "taux_change_vs_gbp",
             "processed_at",
         ]
         # Garder uniquement les colonnes qui existent
