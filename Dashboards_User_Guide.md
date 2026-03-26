@@ -15,6 +15,7 @@ Ce document détaille la démarche pour créer les tableaux de bord décisionnel
    ```text
    postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
    ```
+   *(Note : L'adresse interne reste `postgres:5432`, mais pour DBeaver utilisez `localhost:5433`)*
 4. Cliquez sur **Connect** puis **Finish**.
 
 Ensuite, allez dans **Datasets** -> **+ Dataset**, choisissez le schéma `analytics`, et vous y trouverez vos 3 tables :
