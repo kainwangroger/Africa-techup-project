@@ -219,12 +219,12 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "sum(up{job=~\"minio-.*\"})",
+          "expr": "sum(minio_bucket_usage_object_total)",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "MinIO Objects Storage",
+      "title": "Nombre d'Objets Stockés (MinIO)",
       "type": "stat"
     },
     {
@@ -571,7 +571,7 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "count(container_last_seen{image!=\"\"})",
+          "expr": "count(container_last_seen{name=~\"/.*\", name!~\"/cadvisor|/promtail|/loki|/prometheus\"})",
           "range": true,
           "refId": "A"
         }
@@ -617,7 +617,7 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "time() - container_start_time_seconds{image!=\"\"}",
+          "expr": "time() - container_start_time_seconds{name=~\"/.*\", name!~\"/cadvisor|/promtail|/loki|/prometheus\"}",
           "legendFormat": "{{name}}",
           "range": true,
           "refId": "A"
