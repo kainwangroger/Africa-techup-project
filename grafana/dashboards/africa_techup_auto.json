@@ -601,11 +601,14 @@
       },
       "id": 20,
       "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        }
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
       },
       "targets": [
         {
@@ -614,14 +617,14 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "time() - container_start_time_seconds{id!=\"/\"}",
+          "expr": "time() - container_start_time_seconds{image!=\"\"}",
           "legendFormat": "{{name}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Uptime des Services Docker",
-      "type": "timeseries"
+      "title": "Uptime des Services Docker (Tableau)",
+      "type": "table"
     },
     {
       "datasource": {
@@ -733,12 +736,12 @@
             "uid": "$DS_PROMETHEUS"
           },
           "editorMode": "code",
-          "expr": "count(pg_database_size_bytes)",
+          "expr": "count(pg_database_size_bytes{datname!~\"template.*\"})",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Bases Postgres",
+      "title": "Bases Postgres Utiles",
       "type": "stat"
     },
     {
